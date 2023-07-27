@@ -4,6 +4,7 @@ import { parse } from 'yaml';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -21,6 +22,8 @@ async function bootstrap() {
 
     console.error(errorMessage, err);
   }
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(4000);
 }
