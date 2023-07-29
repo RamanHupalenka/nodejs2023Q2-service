@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { globalDB } from 'src/db';
+import { DBProvider } from 'src/db';
 import { v4 as randomUUID } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,6 +13,8 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
+  constructor(private readonly db: DBProvider) {}
+
   create({ login, password }: CreateUserDto) {
     const user = new User({
       id: randomUUID(),
@@ -23,17 +25,17 @@ export class UserService {
       updatedAt: Date.now(),
     });
 
-    globalDB.users = globalDB.users.concat(user);
+    this.db.users = this.db.users.concat(user);
 
     return user;
   }
 
   findAll() {
-    return globalDB.users;
+    return this.db.users;
   }
 
   findOne(id: string) {
-    const user = globalDB.users.find((user) => user.id === id);
+    const user = this.db.users.find((user) => user.id === id);
 
     if (user) return user;
 
@@ -41,38 +43,38 @@ export class UserService {
   }
 
   update(id: string, { oldPassword, newPassword }: UpdateUserDto) {
-    const userIdx = globalDB.users.findIndex((user) => user.id === id);
+    const userIdx = this.db.users.findIndex((user) => user.id === id);
 
     if (userIdx === -1) {
       throw new NotFoundException();
     }
 
-    const currentUserPassword = globalDB.users[userIdx].password;
+    const currentUserPassword = this.db.users[userIdx].password;
 
     if (currentUserPassword === oldPassword) {
-      globalDB.users = globalDB.users.map((user) => {
-        if (user.id === id) {
-          user.password = newPassword;
-          user.version += 1;
-          user.updatedAt = Date.now();
-        }
+      this.db.users = this.db.users.map((user) => {
+        if (user.id !== id) return user;
+
+        user.password = newPassword;
+        user.version += 1;
+        user.updatedAt = Date.now();
 
         return user;
       });
 
-      return globalDB.users[userIdx];
+      return this.db.users[userIdx];
     }
 
     throw new ForbiddenException();
   }
 
   remove(id: string) {
-    const userIdx = globalDB.users.findIndex((user) => user.id === id);
+    const userIdx = this.db.users.findIndex((user) => user.id === id);
 
     if (userIdx === -1) {
       throw new NotFoundException();
     }
 
-    globalDB.users = globalDB.users.filter((user) => user.id !== id);
+    this.db.users = this.db.users.filter((user) => user.id !== id);
   }
 }

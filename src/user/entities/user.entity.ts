@@ -1,29 +1,26 @@
 import { Exclude } from 'class-transformer';
-import { IsString, IsInt, IsNumber, IsDefined } from 'class-validator';
+import { IsString, IsInt, IsNumber, IsNotEmpty } from 'class-validator';
 
 export class User {
-  @IsDefined()
   @IsString()
+  @IsNotEmpty()
   id: string;
 
-  @IsDefined()
   @IsString()
+  @IsNotEmpty()
   login: string;
 
   @Exclude()
-  @IsDefined()
   @IsString()
+  @IsNotEmpty()
   password: string;
 
-  @IsDefined()
   @IsInt()
   version: number;
 
-  @IsDefined()
   @IsNumber()
   createdAt: number;
 
-  @IsDefined()
   @IsNumber()
   updatedAt: number;
 

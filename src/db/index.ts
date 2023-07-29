@@ -1,21 +1,23 @@
+import { Injectable } from '@nestjs/common';
 import { Album } from 'src/album/entities/album.entity';
 import { Artist } from 'src/artist/entities/artist.entity';
 import { Fav } from 'src/favs/entities/fav.entity';
 import { Track } from 'src/track/entities/track.entity';
 import { User } from 'src/user/entities/user.entity';
 
-interface GlobalDB {
-  tracks: Track[];
-  users: User[];
-  favorites: Fav[];
-  artists: Artist[];
-  albums: Album[];
-}
+@Injectable()
+export class DBProvider {
+  tracks: Track[] = [];
 
-export const globalDB: GlobalDB = {
-  tracks: [],
-  users: [],
-  favorites: [],
-  artists: [],
-  albums: [],
-};
+  users: User[] = [];
+
+  favorites = new Fav({
+    artists: [],
+    albums: [],
+    tracks: [],
+  });
+
+  artists: Artist[] = [];
+
+  albums: Album[] = [];
+}
