@@ -5,6 +5,7 @@ import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import 'dotenv/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,7 +26,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(4000);
+  const PORT = process.env.PORT || 4000;
+
+  await app.listen(PORT);
 }
 
 bootstrap();
