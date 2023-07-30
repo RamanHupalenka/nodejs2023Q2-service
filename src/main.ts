@@ -8,16 +8,22 @@ import { ValidationPipe } from '@nestjs/common';
 import 'dotenv/config';
 
 async function bootstrap() {
+  const PORT = process.env.PORT || 4000;
   const app = await NestFactory.create(AppModule);
 
   try {
     const swaggerFilePath = resolve(__dirname, '../doc/api.yaml');
     const swaggerFileData = await readFile(swaggerFilePath);
     const stringifiedSwaggerData = String(swaggerFileData);
-
     const document: OpenAPIObject = parse(stringifiedSwaggerData);
 
-    SwaggerModule.setup('/doc', app, document);
+    document.servers = [
+      {
+        url: `http://localhost:${PORT}`,
+      },
+    ];
+
+    SwaggerModule.setup('/api', app, document);
   } catch (err) {
     const errorMessage = 'Swagger Open API UI setup error: %O';
 
@@ -25,8 +31,6 @@ async function bootstrap() {
   }
 
   app.useGlobalPipes(new ValidationPipe());
-
-  const PORT = process.env.PORT || 4000;
 
   await app.listen(PORT);
 }
