@@ -11,13 +11,11 @@ import {
   Put,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { validateIdParam } from 'src/validators/uuid';
+import { ValidateIdParam } from 'src/validators/uuid';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 
-@ApiTags('Albums')
 @Controller('album')
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
@@ -42,9 +40,7 @@ export class AlbumController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Param('id') id: string) {
-    validateIdParam(id);
-
+  findOne(@Param('id', ValidateIdParam) id: string) {
     return this.albumService.findOne(id);
   }
 
@@ -52,19 +48,16 @@ export class AlbumController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    validateIdParam(id);
-
+  update(
+    @Param('id', ValidateIdParam) id: string,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
     return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  @Header('Accept', 'application/json')
-  @Header('Content-Type', 'application/json')
-  remove(@Param('id') id: string) {
-    validateIdParam(id);
-
-    return this.albumService.remove(id);
+  remove(@Param('id', ValidateIdParam) id: string) {
+    this.albumService.remove(id);
   }
 }

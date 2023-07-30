@@ -9,11 +9,9 @@ import {
   HttpCode,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { validateIdParam } from 'src/validators/uuid';
+import { ValidateIdParam } from 'src/validators/uuid';
 import { FavsService } from './favs.service';
 
-@ApiTags('Favorites')
 @Controller('favs')
 export class FavsController {
   constructor(private readonly favsService: FavsService) {}
@@ -22,9 +20,7 @@ export class FavsController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  addArtist(@Param('id') id: string) {
-    validateIdParam(id);
-
+  addArtist(@Param('id', ValidateIdParam) id: string) {
     return this.favsService.addArtist(id);
   }
 
@@ -32,9 +28,7 @@ export class FavsController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  addAlbum(@Param('id') id: string) {
-    validateIdParam(id);
-
+  addAlbum(@Param('id', ValidateIdParam) id: string) {
     return this.favsService.addAlbum(id);
   }
 
@@ -42,9 +36,7 @@ export class FavsController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  addTrack(@Param('id') id: string) {
-    validateIdParam(id);
-
+  addTrack(@Param('id', ValidateIdParam) id: string) {
     return this.favsService.addTrack(id);
   }
 
@@ -60,9 +52,7 @@ export class FavsController {
   @HttpCode(204)
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
-  removeArtist(@Param('id') id: string) {
-    validateIdParam(id);
-
+  removeArtist(@Param('id', ValidateIdParam) id: string) {
     return this.favsService.removeArtist(id);
   }
 
@@ -70,18 +60,13 @@ export class FavsController {
   @HttpCode(204)
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
-  removeAlbum(@Param('id') id: string) {
-    validateIdParam(id);
+  removeAlbum(@Param('id', ValidateIdParam) id: string) {
     return this.favsService.removeAlbum(id);
   }
 
   @Delete('/track/:id')
   @HttpCode(204)
-  @Header('Accept', 'application/json')
-  @Header('Content-Type', 'application/json')
-  removeTrack(@Param('id') id: string) {
-    validateIdParam(id);
-
-    return this.favsService.removeTrack(id);
+  removeTrack(@Param('id', ValidateIdParam) id: string) {
+    this.favsService.removeTrack(id);
   }
 }

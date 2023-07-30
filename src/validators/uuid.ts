@@ -1,10 +1,15 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 import { isUUID } from 'class-validator';
 
-export const validateIdParam = (id: string) => {
-  const isNotUUIDId = !isUUID(id, 4);
+@Injectable()
+export class ValidateIdParam implements PipeTransform<string> {
+  transform(value: string): string {
+    const isNotUUIDId = !isUUID(value, 4);
 
-  if (isNotUUIDId) {
-    throw new BadRequestException();
+    if (isNotUUIDId) {
+      throw new BadRequestException();
+    }
+
+    return value;
   }
-};
+}

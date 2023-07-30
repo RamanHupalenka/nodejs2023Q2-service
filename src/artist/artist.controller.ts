@@ -11,13 +11,11 @@ import {
   HttpCode,
   Put,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
-import { validateIdParam } from 'src/validators/uuid';
+import { ValidateIdParam } from 'src/validators/uuid';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
-@ApiTags('Artists')
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
@@ -42,9 +40,7 @@ export class ArtistController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Param('id') id: string) {
-    validateIdParam(id);
-
+  findOne(@Param('id', ValidateIdParam) id: string) {
     return this.artistService.findOne(id);
   }
 
@@ -52,19 +48,16 @@ export class ArtistController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  update(@Param('id') id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    validateIdParam(id);
-
+  update(
+    @Param('id', ValidateIdParam) id: string,
+    @Body() updateArtistDto: UpdateArtistDto,
+  ) {
     return this.artistService.update(id, updateArtistDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  @Header('Accept', 'application/json')
-  @Header('Content-Type', 'application/json')
-  remove(@Param('id') id: string) {
-    validateIdParam(id);
-
-    return this.artistService.remove(id);
+  remove(@Param('id', ValidateIdParam) id: string) {
+    this.artistService.remove(id);
   }
 }

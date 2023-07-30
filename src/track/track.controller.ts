@@ -11,13 +11,11 @@ import {
   Put,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
-import { validateIdParam } from 'src/validators/uuid';
+import { ValidateIdParam } from 'src/validators/uuid';
 
-@ApiTags('Tracks')
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
@@ -42,9 +40,7 @@ export class TrackController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Param('id') id: string) {
-    validateIdParam(id);
-
+  findOne(@Param('id', ValidateIdParam) id: string) {
     return this.trackService.findOne(id);
   }
 
@@ -52,19 +48,16 @@ export class TrackController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  update(@Param('id') id: string, @Body() updateTrackDto: UpdateTrackDto) {
-    validateIdParam(id);
-
+  update(
+    @Param('id', ValidateIdParam) id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
     return this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  @Header('Accept', 'application/json')
-  @Header('Content-Type', 'application/json')
-  remove(@Param('id') id: string) {
-    validateIdParam(id);
-
-    return this.trackService.remove(id);
+  remove(@Param('id', ValidateIdParam) id: string) {
+    this.trackService.remove(id);
   }
 }

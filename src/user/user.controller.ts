@@ -11,13 +11,11 @@ import {
   HttpCode,
   Put,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { validateIdParam } from 'src/validators/uuid';
+import { ValidateIdParam } from 'src/validators/uuid';
 
-@ApiTags('Users')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -42,9 +40,7 @@ export class UserController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  findOne(@Param('id') id: string) {
-    validateIdParam(id);
-
+  findOne(@Param('id', ValidateIdParam) id: string) {
     return this.userService.findOne(id);
   }
 
@@ -52,19 +48,16 @@ export class UserController {
   @Header('Accept', 'application/json')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(ClassSerializerInterceptor)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    validateIdParam(id);
-
+  update(
+    @Param('id', ValidateIdParam) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
     return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
   @HttpCode(204)
-  @Header('Accept', 'application/json')
-  @Header('Content-Type', 'application/json')
-  remove(@Param('id') id: string) {
-    validateIdParam(id);
-
-    return this.userService.remove(id);
+  remove(@Param('id', ValidateIdParam) id: string) {
+    this.userService.remove(id);
   }
 }
